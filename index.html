@@ -8,10 +8,65 @@
     <link rel="shortcut icon" href="~/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js" integrity="sha512-emSwuKiMyYedRwflbZB2ghzX8Cw8fmNVgZ6yQNNXXagFzFOaQmbvQ1vmDkddHjm5AITcBIZfC7k4ShQSjgPAmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container-fluid {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        footer.bottom {
+            background-color: #000;
+            color: blue;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer.bottom .center {
+            font-size: 18px;
+        }
+
+        footer.bottom .h-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+        }
+
+        footer.bottom .h-card p {
+            margin: 5px;
+        }
+
+        footer.bottom a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        footer.bottom a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+
 </head>
 <body>
     <div class="container-fluid">
-        <h1 class="row">Login</h1>
+        <h1 class="row">Login Page</h1>
 
         <main>
             <div class="row">
@@ -25,9 +80,9 @@
             </div>
 
             <div>
-                <button onclick="loginButton">Login</button>
-                <button onclick="dashboardButton">Get Dashboard</button>
-                <button onclick="settingsButton">Get Settings</button>
+                <button id="loginButton">Login</button>
+                <button id="dashboardButton">Get Dashboard</button>
+                <button id="settingsButton">Get Settings</button>
             </div>
         </main>
     </div>
@@ -53,8 +108,9 @@
                     getSettings();
                 }
             } else {
-
-                window.location.href = '/';
+                if (currentPath !== '/') {
+                  window.location.href = '/';
+                }  
             }
         }
 
@@ -104,12 +160,30 @@
 
 
         function getDashboard() {
+            const token = localStorage.getItem('jwt');
+            const currentPath = window.location.pathname;
+
+            if (!token || decodeJWT(token).exp < Date.now() / 1000 || currentPath !== '/dashboard') {
+                localStorage.removeItem('jwt');
+                window.location.href = '/';
+                return;
+            }
+
             document.querySelector('h1.row').innerHTML = 'Dashboard';
             document.querySelector('main').innerHTML = 'Entire Details of Dashboard Content Here';
         }
 
 
         function getSettings() {
+            const token = localStorage.getItem('jwt');
+            const currentPath = window.location.pathname;
+
+            if (!token || decodeJWT(token).exp < Date.now() / 1000 || currentPath !== '/settings') {
+                localStorage.removeItem('jwt');
+                window.location.href = '/';
+                return;
+            }
+
             document.querySelector('h1.row').innerHTML = 'Settings';
             document.querySelector('main').innerHTML = 'Entire Details of Settings Content Here';
         }
@@ -125,10 +199,20 @@
             });
             document.getElementById('settingsButton').addEventListener('click', function() {
       
-                //history.pushState({}, '', '/settings');
+                history.pushState({}, '', '/settings');
                 getSettings();
             });
         };
     </script>
+
+<footer class="bottom">
+    <div class="center" aria-label="COPYRIGHT INFORMATION">
+        All rights reserved &copy; Vignesh Babu
+        <div class="h-card">
+            <p class="p-locality">NORTH CAROLINA</p>&nbsp;
+            <p class="p-country-name">USA</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

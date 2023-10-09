@@ -67,6 +67,8 @@ app.post('/api/login', (req, res) => {
 
 });
 
+
+//  Dashboard Protected
 app.get('/api/dashboard', jwtMW, (req, res) => {
     res.json({
         success: true,
@@ -74,11 +76,19 @@ app.get('/api/dashboard', jwtMW, (req, res) => {
     });
 });
 
+//  Settings Protected
+app.get('/api/settings', jwtMW, (req, res) => {
+    res.json({
+        success: true,
+        myContent: 'Settings  protected by JWT'
+    });
+});
 
 
 app.get('/', (req,res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });    
+
 
 app.use(function (err, req, res, next){
     if (err.name === 'UnauthorizedError'){
